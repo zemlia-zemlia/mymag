@@ -64,17 +64,17 @@ $bundle = yiister\gentelella\assets\Asset::register($this);
                         \yiister\gentelella\widgets\Menu::widget(
                             [
                                 "items" => [
-                                    ["label" => "Home", "url" => "/", "icon" => "home"],
-                                    ["label" => "Layout", "url" => ["site/layout"], "icon" => "files-o"],
-                                    ["label" => "Error page", "url" => ["site/error-page"], "icon" => "close"],
+                                    ["label" => "Home", "url" => "/admin", "icon" => "home"],
+                                    ["label" => "Категории", "url" => ["/admin/category"], "icon" => "files-o"],
+                                    ["label" => "Товары", "url" => ["/admin/product"], "icon" => "close"],
                                     [
-                                        "label" => "Widgets",
+                                        "label" => "Свойства",
                                         "icon" => "th",
-                                        "url" => "#",
-                                        "items" => [
-                                            ["label" => "Menu", "url" => ["site/menu"]],
-                                            ["label" => "Panel", "url" => ["site/panel"]],
-                                        ],
+                                        "url" => "/admin/property",
+//                                        "items" => [
+//                                            ["label" => "Menu", "url" => ["site/menu"]],
+//                                            ["label" => "Panel", "url" => ["site/panel"]],
+//                                        ],
                                     ],
                                     [
                                         "label" => "Badges",
