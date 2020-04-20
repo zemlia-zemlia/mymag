@@ -28,6 +28,7 @@ $bundle = yiister\gentelella\assets\Asset::register($this);
     <![endif]-->
 </head>
 <body class="nav-<?= !empty($_COOKIE['menuIsCollapsed']) && $_COOKIE['menuIsCollapsed'] == 'true' ? 'sm' : 'md' ?>" >
+
 <?php $this->beginBody(); ?>
 <div class="container body">
 
@@ -285,7 +286,7 @@ $bundle = yiister\gentelella\assets\Asset::register($this);
                 </div>
             <?php endif; ?>
             <div class="clearfix"></div>
-
+            <?= \app\widgets\Alert::widget() ?>
             <?= $content ?>
         </div>
         <!-- /page content -->

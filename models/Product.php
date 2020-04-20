@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\Inflector;
@@ -28,6 +30,7 @@ use yii\helpers\Inflector;
  */
 class Product extends \yii\db\ActiveRecord
 {
+    use SaveRelationsTrait; // Optional
     /**
      * {@inheritdoc}
      */
@@ -39,8 +42,22 @@ class Product extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-            TimestampBehavior::class
+            TimestampBehavior::class,
+            'saveRelations' => [
+                'class'     => SaveRelationsBehavior::class,
+                'relations' => [
+                   'propertyValues',
+                    'category'
+                ],
+            ],
             ];
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
     }
 
     /**
@@ -54,6 +71,7 @@ class Product extends \yii\db\ActiveRecord
             [['price',  'group_id'], 'integer'],
             [['name', 'article', 'slug', 'meta_title', 'meta_desc', 'meta_keywords'], 'string', 'max' => 255],
             [['article', 'slug'], 'unique'],
+            [['propertyValues'], 'safe'],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id']],
         ];
     }
@@ -99,6 +117,11 @@ class Product extends \yii\db\ActiveRecord
         return $this->hasOne(Group::className(), ['id' => 'group_id']);
     }
 
+    public function getCategory()
+    {
+        return $this->hasMany(Category::class, ['id' => 'id_category'])->viaTable('category_product', ['id_product' => 'id']);
+    }
+
     /**
      * Gets query for [[PropertyValues]].
      *
@@ -108,6 +131,8 @@ class Product extends \yii\db\ActiveRecord
     {
         return $this->hasMany(PropertyValue::className(), ['id_product' => 'id']);
     }
+
+
 
     public function beforeSave($insert)
     {

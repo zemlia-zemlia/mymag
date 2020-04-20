@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Category */
@@ -36,7 +37,50 @@ $this->params['breadcrumbs'][] = $this->title;
             'meta_title',
             'meta_desc',
             'meta_keywords',
+
         ],
     ]) ?>
 
+
+    <h3>Товары:    <?= Html::a('Create Product', ['/admin/product/create', 'id' => $model->id], ['class' => 'btn btn-success']) ?></h3>
+<div class="row">
+    <div class="col-lg-12">
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+
+                'id',
+                'name',
+                'article',
+                'decsription:ntext',
+                'slug',
+                //'price',
+                //'meta_title',
+                //'meta_desc',
+                //'meta_keywords',
+                //'created_at',
+                //'updated_at',
+                //'group_id',
+
+                ['class' => 'yii\grid\ActionColumn',
+                    'buttons'=>[
+                        'view'=>function ($url, $model) {
+                            $customurl=Yii::$app->getUrlManager()->createUrl(['/admin/product/view','id'=>$model['id']]); //$model->id для AR
+                            return \yii\helpers\Html::a( '<span class="glyphicon glyphicon-eye-open"></span>', $customurl,
+                                ['title' => Yii::t('yii', 'View'), 'data-pjax' => '0']);
+                        }
+                        , 'update'=>function ($url, $model) {
+                            $customurl=Yii::$app->getUrlManager()->createUrl(['/admin/product/update','id'=>$model['id']]); //$model->id для AR
+                            return \yii\helpers\Html::a( '<span class="glyphicon glyphicon-pencil"></span>', $customurl,
+                                ['title' => Yii::t('yii', 'View'), 'data-pjax' => '0']);
+                        }
+                    ],
+
+                ],
+            ],
+        ]); ?>
+    </div>
+</div>
 </div>

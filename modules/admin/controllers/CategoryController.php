@@ -3,10 +3,12 @@
 namespace app\modules\admin\controllers;
 
 use app\models\CategoryProperty;
+use app\models\ProductSearch;
 use app\models\Property;
 use Yii;
 use app\models\Category;
 use app\models\CategorySearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -56,8 +58,26 @@ class CategoryController extends Controller
      */
     public function actionView($id)
     {
+//        \yii\helpers\VarDumper::dump( Yii::$app->request->queryParams['ProductSearch'] == [], 5,true);die;
+
+        $model = $this->findModel($id);
+        $searchModel = new ProductSearch();
+        if (Yii::$app->request->queryParams['ProductSearch'] == []) {
+            $dataProvider = $dataProvider = new ActiveDataProvider([
+                'query' => $model->getProducts(),
+            ]);
+        }
+        else {
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        }
+        $dataProvider->pagination->pageSize = 10;
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+
+
         ]);
     }
 
@@ -68,10 +88,17 @@ class CategoryController extends Controller
      */
     public function actionCreate()
     {
+
+
+//        \yii\helpers\VarDumper::dump($root, 5,true);die;
+
         $model = new Category();
         $model->scenario = 'create';
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $root = Category::find()->where(['id' => $model->parent_id])->one();
+
+            $model->prependTo($root);
 
             return $this->redirect(['view', 'id' => $model->id]);
         }

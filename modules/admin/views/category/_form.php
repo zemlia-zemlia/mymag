@@ -12,6 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
+    <?= $form->field($model, 'parent_id')->dropDownList($model->getCategoriesTree())->label('Родительская категория') ?>
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'decsription')->textarea(['rows' => 6]) ?>

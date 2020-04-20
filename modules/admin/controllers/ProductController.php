@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\PropertyValue;
 use Yii;
 use app\models\Product;
 use app\models\ProductSearch;
@@ -37,7 +38,7 @@ class ProductController extends Controller
     {
         $searchModel = new ProductSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $dataProvider->pagination->pageSize = 10;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -62,12 +63,30 @@ class ProductController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
         $model = new Product();
+//        \yii\helpers\VarDumper::dump($model, 5,true);die;
+        $model->category = [$id];
+//        \yii\helpers\VarDumper::dump($model->category[0]->properties, 5,true);die;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $values = Yii::$app->request->post('propertyValues');
+
+
+
+            $model->save();
+            foreach ($values as $key => $value){
+                $val = new PropertyValue();
+                $val->value = $value;
+                $val->id_property = $key;
+                $val->id_product =  $model->id;
+                $val->save();
+
+            }
+            Yii::$app->session->setFlash('success', 'Товар добавлен');
+            return $this->redirect(['/admin/category/view', 'id' => $id]);
         }
 
         return $this->render('create', [
@@ -85,8 +104,27 @@ class ProductController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+//        \yii\helpers\VarDumper::dump($model->propertyValues, 5,true);die;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $values = Yii::$app->request->post('propertyValues');
+
+
+            foreach ($values as $key => $value){
+                $val = PropertyValue::find()->where(['id_property' => $key])->andWhere(['id_product' => $model->id])->one();
+                if (!$val) {
+                    $val = new PropertyValue();
+                    $val->id_property = $key;
+                    $val->id_product =  $model->id;
+                }
+
+                $val->value = $value;
+                $val->save();
+
+            }
+
+
+           $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -105,6 +143,7 @@ class ProductController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        PropertyValue::deleteAll(['id_product' =>$id]);
 
         return $this->redirect(['index']);
     }

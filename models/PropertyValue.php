@@ -31,11 +31,11 @@ class PropertyValue extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_property', 'value', 'id_product'], 'required'],
+//            [['id_property', 'value'], 'required'],
             [['id_property', 'id_product'], 'integer'],
             [['value'], 'string', 'max' => 255],
-            [['id_property'], 'exist', 'skipOnError' => true, 'targetClass' => Property::className(), 'targetAttribute' => ['id_property' => 'id']],
-            [['id_product'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['id_product' => 'id']],
+//            [['id_property'], 'exist', 'skipOnError' => true, 'targetClass' => Property::className(), 'targetAttribute' => ['id_property' => 'id']],
+//            [['id_product'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['id_product' => 'id']],
         ];
     }
 

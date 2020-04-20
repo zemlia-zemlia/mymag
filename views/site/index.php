@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 
 $this->title = 'My Yii Application';
+$this->registerMetaTag(['name' => 'keywords', 'content' => 'yii, framework, php']);
 ?>
 <div class="site-index">
 
